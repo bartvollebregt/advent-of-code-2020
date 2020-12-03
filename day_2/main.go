@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func readFileWithReadString(filename string) (lines []string) {
@@ -81,8 +82,13 @@ func matchesPart2(least int, most int, character string, password string) (match
 }
 
 func main() {
+	start := time.Now()
+
 	var lines = readFileWithReadString("./day_2/input.txt")
 	var matchesPart1, matchesPart2 = getValidPasswords(lines)
 	fmt.Printf("We found %d Part 1 matches\n", len(matchesPart1))
 	fmt.Printf("We found %d Part 2 matches\n", len(matchesPart2))
+
+	var elapsed = time.Since(start)
+	fmt.Printf("It took %s\n", elapsed)
 }

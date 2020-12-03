@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const SUM = 2020
@@ -73,6 +74,8 @@ func findThreeNumberSumProduct(numbers []int, sum int) (num1 int, num2 int, num3
 }
 
 func main() {
+	start := time.Now()
+
 	var lines = readFileWithReadString("./day_1/input.txt")
 	{
 		var num1, num2, sumResult, product = findTwoNumberSumProduct(lines, SUM)
@@ -82,4 +85,7 @@ func main() {
 		var num1, num2, num3, sumResult, product = findThreeNumberSumProduct(lines, SUM)
 		fmt.Printf("[Part2] We've got a winner! %d + %d + %d = %d, product = %d\n", num1, num2, num3, sumResult, product)
 	}
+
+	var elapsed = time.Since(start)
+	fmt.Printf("It took %s\n", elapsed)
 }

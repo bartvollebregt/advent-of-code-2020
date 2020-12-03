@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 )
 
 const MAP_DUPLICATION = 100
@@ -48,12 +49,12 @@ func findTrees(mapLines []string, down int, right int) (count int) {
 	count = 0
 	var currentIndex = 0
 	for index, line := range mapLines {
-		if index % down != 0 {
+		if index%down != 0 {
 			continue
 		}
 		var character = string([]rune(line)[currentIndex])
 
-		currentIndex = currentIndex+right
+		currentIndex = currentIndex + right
 		if character == TREE_CHAR {
 			count++
 		}
@@ -62,6 +63,8 @@ func findTrees(mapLines []string, down int, right int) (count int) {
 }
 
 func main() {
+	start := time.Now()
+
 	var lines = readFileWithReadString("./day_3/input.txt")
 	var mapLines = buildMap(lines)
 
@@ -77,4 +80,7 @@ func main() {
 
 	fmt.Printf("[Part 1] Trees: %d\n", part1FoundTrees)
 	fmt.Printf("[Part 2] Product: %d\n", part2Product)
+
+	var elapsed = time.Since(start)
+	fmt.Printf("It took %s\n", elapsed)
 }
