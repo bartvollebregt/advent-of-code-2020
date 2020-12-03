@@ -9,7 +9,6 @@ import (
 	"time"
 )
 
-const MAP_DUPLICATION = 100
 const TREE_CHAR = "#"
 
 func readFileWithReadString(filename string) (lines []string) {
@@ -38,19 +37,15 @@ func readFileWithReadString(filename string) (lines []string) {
 	return lines
 }
 
-func buildMap(lines []string) (mapLines []string) {
-	for _, line := range lines {
-		mapLines = append(mapLines, strings.Repeat(line, MAP_DUPLICATION))
-	}
-	return mapLines
-}
-
 func findTrees(mapLines []string, down int, right int) (count int) {
 	count = 0
 	var currentIndex = 0
 	for index, line := range mapLines {
 		if index%down != 0 {
 			continue
+		}
+		if currentIndex > len(line)-1 {
+			currentIndex = currentIndex - len(line)
 		}
 		var character = string([]rune(line)[currentIndex])
 
@@ -65,8 +60,7 @@ func findTrees(mapLines []string, down int, right int) (count int) {
 func main() {
 	start := time.Now()
 
-	var lines = readFileWithReadString("./day_3/input.txt")
-	var mapLines = buildMap(lines)
+	var mapLines = readFileWithReadString("./day_3/input.txt")
 
 	var part1FoundTrees = findTrees(mapLines, 1, 3)
 
