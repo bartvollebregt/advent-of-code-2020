@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -20,6 +21,10 @@ type boardingPass struct {
 	row    int
 	column int
 	seatId int
+}
+
+func (p boardingPass) String() string {
+	return fmt.Sprintf("{SeatId: %d, Row: %d, Column: %d}", p.seatId, p.row, p.column)
 }
 
 func readFileWithReadString(filename string) (lines []string) {
@@ -96,27 +101,22 @@ func findMaxSeatId(boardingPasses []boardingPass) (max boardingPass) {
 	return max
 }
 
-func findMissingBoardingPasses(boardingPasses []boardingPass) (missingBoardingPasses []boardingPass) {
-	for r := 0; r < ROW_AMOUNT; r++ {
-		for c := 0; c < COLUMN_AMOUNT; c++ {
-			var passMissing = true
-			for _, boardingPass := range boardingPasses {
-				if boardingPass.row == r && boardingPass.column == c {
-					passMissing = false
-					break
-				}
-			}
-			if passMissing && r != 0 && c != 0 && r != ROW_AMOUNT-1 && r != COLUMN_AMOUNT-1 {
-				var missingPass = boardingPass{
-					row:    r,
-					column: c,
-					seatId: calculateSeatId(r, c),
-				}
-				missingBoardingPasses = append(missingBoardingPasses, missingPass)
-			}
+func findMissingSeatIdsPasses(boardingPasses []boardingPass) (missingSeatIds []int) {
+	var prevSeatId = boardingPasses[0].seatId - 1
+	for _, boardingPass := range boardingPasses {
+		if (prevSeatId + 1) != boardingPass.seatId {
+			missingSeatIds = append(missingSeatIds, boardingPass.seatId-1)
 		}
+		prevSeatId = boardingPass.seatId
 	}
-	return missingBoardingPasses
+	return missingSeatIds
+}
+
+func sortBoardingPasses(boardingPasses []boardingPass) []boardingPass {
+	sort.Slice(boardingPasses[:], func(i, j int) bool {
+		return boardingPasses[i].seatId < boardingPasses[j].seatId
+	})
+	return boardingPasses
 }
 
 func main() {
@@ -126,10 +126,11 @@ func main() {
 	var boardingPasses = parseBoardingPasses(lines)
 	var maxBoardingPass = findMaxSeatId(boardingPasses)
 
-	fmt.Printf("[Part 1] Maximum SeatId is %d\n", maxBoardingPass.seatId)
+	fmt.Printf("[Part 1] Maximum SeatId is: %d\n", maxBoardingPass.seatId)
 
-	var missingBoardingPasses = findMissingBoardingPasses(boardingPasses)
-	fmt.Printf("[Part 2] Missing Boarding Passes %d\n", missingBoardingPasses)
+	boardingPasses = sortBoardingPasses(boardingPasses)
+	var missingSeatIds = findMissingSeatIdsPasses(boardingPasses)
+	fmt.Printf("[Part 2] Missing Seat ID's are: %d\n", missingSeatIds)
 
 	var elapsed = time.Since(start)
 	fmt.Printf("It took %s\n", elapsed)
